@@ -13,8 +13,12 @@ var openDB = function(callback) {
 
 var createCollection=function(collectionID) {
     client.createCollection(collectionID,function() {
+	    collection=client.collection(collectionID);
+	    collection.ensureIndex({ "dateTime" : -1 },{ "name" : "dateTime", "unique" : true, "dropDups" : true });   	
     });
 };	
+
+
 
 var insertData = function(documentData,collectionID) {
      collection=client.collection(collectionID);
@@ -27,8 +31,13 @@ var removeData = function(documentID,collectionID) {
 };
 
 var updateData = function(documentData,collectionID) {
-     collection=client.collection(collectionID);
-     collection.update({id: documentID}, documentData);
+    collection=client.collection(collectionID);
+    collection.update({id: documentID}, documentData);
+};
+
+var updateTimeSeriesData = function(documentData,collectionID) {
+    collection=client.collection(collectionID);
+    collection.update({dateTime: documentData.dateTime}, documentData, { upsert: true });
 };
 
 var getCollection = function(collectionID) {
@@ -63,6 +72,16 @@ var listSomeData = function(collectionID,val,ascdes,limit,callback) {
 	});
 };
 
+var queryData = function(collectionID,criteria, val,ascdes,limit,callback) {
+	var returnData=[];
+	getCollection(collectionID).find(criteria, {'sort':[[val,ascdes]],'limit': limit}, 
+		function(err, cursor) {           
+        cursor.toArray(function(err, docs) { 
+        	callback(docs);
+        });
+	});
+};
+
 var findDoc = function(condition,collectionID) {
 	//var coll = getCollection(collectionID);
 	//return getCollection(collectionID);
@@ -85,6 +104,8 @@ exports.removeData=removeData;
 exports.updateData=updateData;
 exports.listAllData=listAllData;
 exports.listSomeData=listSomeData;
+exports.queryData=queryData;
+exports.updateTimeSeriesData=updateTimeSeriesData;
 exports.createCollection=createCollection;
 exports.getCollection=getCollection;
 exports.getCount=getCount;
