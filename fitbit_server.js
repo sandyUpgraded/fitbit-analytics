@@ -4,7 +4,7 @@ var express = require('express'),
                                connect.cookieParser('session'),
                                connect.session());
 var fs = require('fs');
-var fitbitClient = require('./fitbit')(PASS1, PASS2);
+var fitbitClient = require('./fitbit')(PASS11, PASS2);
 var mongoDB=require('./mongolib');
 
 var token;
