@@ -5,6 +5,7 @@ var express = require('express'),
                                connect.session());
 var fs = require('fs');
 var creds = require('./creds');
+console.log(creds.PASS11);
 var fitbitClient = require('./fitbit')(creds.PASS11, creds.PASS2);
 var mongoDB=require('./mongolib');
 
